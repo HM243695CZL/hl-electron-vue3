@@ -10,3 +10,8 @@
 - electron：21.2.2
 - electron-builder：23.3.3
 - vite-plugin-electron：0.10.2
+
+## 分支说明
+- main 基础分支
+- next 集成vue-next-admin框架的分支
+- dev 开发分支
