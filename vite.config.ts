@@ -3,6 +3,15 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import electron from 'vite-plugin-electron';
 import pkg from './package.json';
+import { resolve } from 'path';
+
+const pathResolve = (dir: string): any => {
+  return resolve(__dirname, '.', dir);
+};
+
+const alias: Record<string, string> = {
+  '/@': pathResolve('./src/'),
+};
 
 rmSync('dist', { recursive: true, force: true });
 // https://vitejs.dev/config/
@@ -30,6 +39,7 @@ export default defineConfig({
       },
     ]),
   ],
+  resolve: { alias },
   server: process.env.VSCODE_DEBUG
     ? {
         host: pkg.debug.env.VITE_DEV_SERVER_HOSTNAME,
