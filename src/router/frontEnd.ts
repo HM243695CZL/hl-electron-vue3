@@ -1,7 +1,7 @@
 import { RouteRecordRaw } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { formatTwoStageRoutes, formatFlatteningRoutes, router } from '../router/index';
-import { dynamicRoutes, notFoundAndNoPower } from '../router/route';
+import { dynamicRoutes, staticRoutes, notFoundAndNoPower } from '../router/route';
 import pinia from '../stores/index';
 import { Session } from '../utils/storage';
 import { useUserInfo } from '../stores/userInfo';
@@ -63,7 +63,7 @@ export async function frontEndsResetRoute() {
  * @returns 返回替换后的路由数组
  */
 export function setFilterRouteEnd() {
-	let filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes));
+	let filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes(staticRoutes));
 	filterRouteEnd[0].children = [...setFilterRoute(filterRouteEnd[0].children), ...notFoundAndNoPower];
 	return filterRouteEnd;
 }
@@ -100,7 +100,7 @@ export function setCacheTagsViewRoutes() {
 	const stores = useUserInfo(pinia);
 	const storesTagsView = useTagsViewRoutes(pinia);
 	const { userInfos } = storeToRefs(stores);
-	let rolesRoutes = setFilterHasRolesMenu(dynamicRoutes, userInfos.value.roles);
+	let rolesRoutes = setFilterHasRolesMenu(staticRoutes, userInfos.value.roles);
 	// 添加到 pinia setTagsViewRoutes 中
 	storesTagsView.setTagsViewRoutes(formatTwoStageRoutes(formatFlatteningRoutes(rolesRoutes))[0].children);
 }
@@ -114,7 +114,7 @@ export function setFilterMenuAndCacheTagsViewRoutes() {
 	const stores = useUserInfo(pinia);
 	const storesRoutesList = useRoutesList(pinia);
 	const { userInfos } = storeToRefs(stores);
-	storesRoutesList.setRoutesList(setFilterHasRolesMenu(dynamicRoutes[0].children, userInfos.value.roles));
+	storesRoutesList.setRoutesList(setFilterHasRolesMenu(staticRoutes[0].children, userInfos.value.roles));
 	setCacheTagsViewRoutes();
 }
 
