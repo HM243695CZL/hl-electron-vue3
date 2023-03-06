@@ -14,7 +14,7 @@ const createMainWindow = (BrowserWindow: any) => {
         height: mainWindowState.height,
         focusable: true,
         show: false,
-        frame: false,
+        frame: true,
         webPreferences: {
             webSecurity: true,
             nodeIntegration: true,
