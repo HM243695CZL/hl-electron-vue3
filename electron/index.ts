@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron';
-import { setTitle } from './controller/main';
+import { setTitle, setScreen } from './controller/main';
 import { createMainWindow } from './windows/mainWindows';
 
 app.whenReady().then(() => {
@@ -9,6 +9,7 @@ app.whenReady().then(() => {
   });
   // 初始化监听事件
   setTitle();
+  setScreen();
 });
 
 app.on('window-all-closed', () => {

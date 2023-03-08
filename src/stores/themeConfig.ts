@@ -56,15 +56,15 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启菜单手风琴效果
 			isUniqueOpened: false,
 			// 是否开启固定 Header
-			isFixedHeader: false,
+			isFixedHeader: true,
 			// 初始化变量，用于更新菜单 el-scrollbar 的高度，请勿删除
 			isFixedHeaderChange: false,
 			// 是否开启经典布局分割菜单（仅经典布局生效）
 			isClassicSplitMenu: false,
 			// 是否开启自动锁屏
-			isLockScreen: false,
+			isLockScreen: true,
 			// 开启自动锁屏倒计时(s/秒)
-			lockScreenTime: 30,
+			lockScreenTime: 120,
 
 			/**
 			 * 界面显示
@@ -96,7 +96,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启水印
 			isWartermark: false,
 			// 水印文案
-			wartermarkText: 'small@小柒',
+			wartermarkText: 'hl243695czyn',
 
 			/**
 			 * 其它设置
@@ -129,9 +129,9 @@ export const useThemeConfig = defineStore('themeConfig', {
 			 * 全局网站标题 / 副标题
 			 */
 			// 网站主标题（菜单导航、浏览器当前网页标题）
-			globalTitle: 'vue-next-admin',
+			globalTitle: 'hl243695czyn',
 			// 网站副标题（登录页顶部文字）
-			globalViceTitle: 'vueNextAdmin',
+			globalViceTitle: 'hl243695czyn',
 			// 默认初始语言，可选值"<zh-cn|en|zh-tw>"，默认 zh-cn
 			globalI18n: 'zh-cn',
 			// 默认全局组件大小，可选值"<large|'default'|small>"，默认 'large'

@@ -12,9 +12,11 @@ const createMainWindow = (BrowserWindow: any) => {
         y: mainWindowState.y,
         width: mainWindowState.width,
         height: mainWindowState.height,
+        minWidth: 1050,
+        minHeight: 600,
         focusable: true,
         show: false,
-        frame: true,
+        frame: false,
         webPreferences: {
             webSecurity: true,
             nodeIntegration: true,

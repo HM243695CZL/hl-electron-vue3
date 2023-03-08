@@ -1,6 +1,15 @@
 <template>
 	<div class="layout-navbars-breadcrumb-user pr15" :style="{ flex: layoutUserFlexNum }">
-		<el-dropdown :show-timeout="70" :hide-timeout="50" trigger="click" @command="onComponentSizeChange">
+		<el-icon title="最小化" @click="setScreen('min')">
+			<ele-Minus />
+		</el-icon>
+		<el-icon title="最大化" @click="setScreen('max')">
+			<ele-FullScreen />
+		</el-icon>
+		<el-icon title="关闭" @click="setScreen('close')">
+			<ele-Close />
+		</el-icon>
+		<!-- <el-dropdown :show-timeout="70" :hide-timeout="50" trigger="click" @command="onComponentSizeChange">
 			<div class="layout-navbars-breadcrumb-user-icon">
 				<i class="iconfont icon-ziti" title="组件大小"></i>
 			</div>
@@ -39,7 +48,7 @@
 		</div>
 		<el-dropdown :show-timeout="70" :hide-timeout="50" @command="onHandleCommandClick">
 			<span class="layout-navbars-breadcrumb-user-link">
-				<!-- <img :src="userInfos.photo" class="layout-navbars-breadcrumb-user-link-photo mr5" /> -->
+				<img :src="userInfos.photo" class="layout-navbars-breadcrumb-user-link-photo mr5" />
 				{{ userInfos.userName === '' ? 'common' : userInfos.userName }}
 				<el-icon class="el-icon--right">
 					<ele-ArrowDown />
@@ -55,7 +64,7 @@
 				</el-dropdown-menu>
 			</template>
 		</el-dropdown>
-		<Search ref="searchRef" />
+		<Search ref="searchRef" /> -->
 	</div>
 </template>
 
@@ -177,6 +186,12 @@ export default defineComponent({
 					break;
 			}
 		};
+		/**
+		 * 操作窗口
+		 */
+		const setScreen = (value: string) => {
+			window.electronAPI.setScreen(value);
+		};
 		// 页面加载时
 		onMounted(() => {
 			if (Local.get('themeConfig')) {
@@ -190,6 +205,7 @@ export default defineComponent({
 			onScreenfullClick,
 			onSearchClick,
 			onComponentSizeChange,
+			setScreen,
 			searchRef,
 			layoutUserFlexNum,
 			...toRefs(state),
@@ -241,6 +257,11 @@ export default defineComponent({
 	}
 	::v-deep(.el-badge__content.is-fixed) {
 		top: 12px;
+	}
+	.el-icon{
+		margin-right: 20px;
+		font-size: 20px;
+		cursor: pointer;
 	}
 }
 </style>

@@ -128,6 +128,7 @@ export default defineComponent({
 	height: inherit;
 	display: flex;
 	align-items: center;
+	-webkit-app-region: drag;
 	.layout-navbars-breadcrumb-icon {
 		cursor: pointer;
 		font-size: 18px;
