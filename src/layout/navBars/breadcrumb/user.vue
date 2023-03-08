@@ -262,6 +262,9 @@ export default defineComponent({
 		margin-right: 20px;
 		font-size: 20px;
 		cursor: pointer;
+    &:hover{
+      color: #126ac6;
+    }
 	}
 }
 </style>

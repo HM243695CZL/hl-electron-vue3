@@ -61,9 +61,9 @@
   },
   "build": {
     "appId": "com.electron.desktop",
-    "productName": "ElectronVueVite",
+    "productName": "hl-music",
     "asar": true,
-    "copyright": "Copyright © 2022 XingXingZaiXian",
+    "copyright": "Copyright © 2023 hl243695czyn",
     "directories": {
       "output": "release/${version}"
     },

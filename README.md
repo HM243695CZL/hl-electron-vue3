@@ -15,3 +15,4 @@
 - main 基础分支
 - next 集成vue-next-admin框架的分支
 - dev 开发分支
+- music 音乐分支

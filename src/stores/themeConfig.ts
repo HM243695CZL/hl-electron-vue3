@@ -62,7 +62,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启经典布局分割菜单（仅经典布局生效）
 			isClassicSplitMenu: false,
 			// 是否开启自动锁屏
-			isLockScreen: true,
+			isLockScreen: false,
 			// 开启自动锁屏倒计时(s/秒)
 			lockScreenTime: 120,
 
@@ -74,9 +74,9 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 初始化变量，用于 el-scrollbar 的高度更新，请勿删除
 			isShowLogoChange: false,
 			// 是否开启 Breadcrumb，强制经典、横向布局不显示
-			isBreadcrumb: true,
+			isBreadcrumb: false,
 			// 是否开启 Tagsview
-			isTagsview: true,
+			isTagsview: false,
 			// 是否开启 Breadcrumb 图标
 			isBreadcrumbIcon: false,
 			// 是否开启 Tagsview 图标
@@ -94,7 +94,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启色弱模式
 			isInvert: false,
 			// 是否开启水印
-			isWartermark: false,
+			isWartermark: true,
 			// 水印文案
 			wartermarkText: 'hl243695czyn',
 

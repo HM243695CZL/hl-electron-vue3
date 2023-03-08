@@ -3,7 +3,7 @@
 		<router-view v-slot="{ Component }">
 			<transition :name="setTransitionName" mode="out-in">
 				<keep-alive :include="getKeepAliveNames">
-					<component :is="Component" :key="refreshRouterViewKey" class="w100" />
+					<component :is="Component" :key="refreshRouterViewKey" class="w100 component-parent" />
 				</keep-alive>
 			</transition>
 		</router-view>
@@ -86,3 +86,8 @@ export default defineComponent({
 	},
 });
 </script>
+<style lang="scss" scoped>
+.component-parent{
+  height: calc(100vh - 130px);
+}
+</style>
