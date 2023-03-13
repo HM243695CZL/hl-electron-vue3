@@ -57,10 +57,8 @@ export default defineComponent({
       postAction(getLoginStatusApi + '?timestamp=' + Date.now(), {
         cookie: Session.get('cookie')
       }).then(res => {
-        if (res.data.profile) {
-          state.userInfo = res.data.profile;
-          Session.set('userInfo', res.data.profile);
-        }
+        state.userInfo = res.data.profile;
+        Session.set('userInfo', res.data.profile);
       })
     };
     onMounted(() => {

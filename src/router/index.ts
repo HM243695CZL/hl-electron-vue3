@@ -4,12 +4,9 @@ import 'nprogress/nprogress.css';
 import pinia from '../stores/index';
 import { storeToRefs } from 'pinia';
 import { useKeepALiveNames } from '../stores/keepAliveNames';
-import { useRoutesList } from '../stores/routesList';
 import { useThemeConfig } from '../stores/themeConfig';
-import { Session } from '../utils/storage';
 import { staticRoutes } from '../router/route';
 import { initFrontEndControlRoutes } from '../router/frontEnd';
-import { initBackEndControlRoutes } from '../router/backEnd';
 
 /**
  * 1、前端控制路由时：isRequestRoutes 为 false，需要写 roles，需要走 setFilterRoute 方法。

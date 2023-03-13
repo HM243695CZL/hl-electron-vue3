@@ -52,7 +52,6 @@ import Cookies from 'js-cookie';
 import { storeToRefs } from 'pinia';
 import { useThemeConfig } from '../../../stores/themeConfig';
 import { initFrontEndControlRoutes } from '../../../router/frontEnd';
-import { initBackEndControlRoutes } from '../../../router/backEnd';
 import { Session } from '../../../utils/storage';
 import { formatAxis } from '../../../utils/formatTime';
 import { NextLoading } from '../../../utils/loading';
@@ -93,7 +92,6 @@ export default defineComponent({
 			} else {
 				// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
 				// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-				await initBackEndControlRoutes();
 				// 执行完 initBackEndControlRoutes，再执行 signInSuccess
 				signInSuccess();
 			}
