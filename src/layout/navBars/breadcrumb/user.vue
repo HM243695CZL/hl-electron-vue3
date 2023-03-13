@@ -1,214 +1,77 @@
 <template>
-	<div class="layout-navbars-breadcrumb-user pr15" :style="{ flex: layoutUserFlexNum }">
-		<el-icon title="最小化" @click="setScreen('min')">
+	<div class="layout-navbars-breadcrumb-user">
+    <div class="login-state" @click="showQrCodeLogin()">
+      <el-icon v-if="!userInfo" class="user-icon" color="#fff">
+        <ele-User />
+      </el-icon>
+      <div v-if="userInfo" class="user-avatar">
+        <img :src="userInfo.avatarUrl" alt="">
+      </div>
+      {{userInfo ? userInfo.nickname : '未登录'}}
+    </div>
+    <div class="line"></div>
+		<el-icon color="#fff" title="最小化" @click="setScreen('min')">
 			<ele-Minus />
 		</el-icon>
-		<el-icon title="最大化" @click="setScreen('max')">
+		<el-icon color="#fff" title="最大化" @click="setScreen('max')">
 			<ele-FullScreen />
 		</el-icon>
-		<el-icon title="关闭" @click="setScreen('close')">
+		<el-icon color="#fff" title="关闭" @click="setScreen('close')">
 			<ele-Close />
 		</el-icon>
-		<!-- <el-dropdown :show-timeout="70" :hide-timeout="50" trigger="click" @command="onComponentSizeChange">
-			<div class="layout-navbars-breadcrumb-user-icon">
-				<i class="iconfont icon-ziti" title="组件大小"></i>
-			</div>
-			<template #dropdown>
-				<el-dropdown-menu>
-					<el-dropdown-item command="large" :disabled="disabledSize === 'large'">大型</el-dropdown-item>
-					<el-dropdown-item command="default" :disabled="disabledSize === 'default'">默认</el-dropdown-item>
-					<el-dropdown-item command="small" :disabled="disabledSize === 'small'">小型</el-dropdown-item>
-				</el-dropdown-menu>
-			</template>
-		</el-dropdown>
-		<div class="layout-navbars-breadcrumb-user-icon" @click="onSearchClick">
-			<el-icon title="菜单搜索">
-				<ele-Search />
-			</el-icon>
-		</div>
-		<div class="layout-navbars-breadcrumb-user-icon" @click="onLayoutSetingClick">
-			<i class="icon-skin iconfont" title="布局配置"></i>
-		</div>
-		<div class="layout-navbars-breadcrumb-user-icon">
-			<el-popover placement="bottom" trigger="click" transition="el-zoom-in-top" :width="300" :persistent="false">
-				<template #reference>
-					<el-badge :is-dot="true">
-						<el-icon title="消息">
-							<ele-Bell />
-						</el-icon>
-					</el-badge>
-				</template>
-				<template #default>
-					<UserNews />
-				</template>
-			</el-popover>
-		</div>
-		<div class="layout-navbars-breadcrumb-user-icon mr10" @click="onScreenfullClick">
-			<i class="iconfont" :title="isScreenfull ? '关全屏' : '开全屏'" :class="!isScreenfull ? 'icon-fullscreen' : 'icon-tuichuquanping'"></i>
-		</div>
-		<el-dropdown :show-timeout="70" :hide-timeout="50" @command="onHandleCommandClick">
-			<span class="layout-navbars-breadcrumb-user-link">
-				<img :src="userInfos.photo" class="layout-navbars-breadcrumb-user-link-photo mr5" />
-				{{ userInfos.userName === '' ? 'common' : userInfos.userName }}
-				<el-icon class="el-icon--right">
-					<ele-ArrowDown />
-				</el-icon>
-			</span>
-			<template #dropdown>
-				<el-dropdown-menu>
-					<el-dropdown-item command="/home">首页</el-dropdown-item>
-					<el-dropdown-item command="wareHouse">代码仓库</el-dropdown-item>
-					<el-dropdown-item command="/404">404</el-dropdown-item>
-					<el-dropdown-item command="/401">401</el-dropdown-item>
-					<el-dropdown-item divided command="logOut">退出登录</el-dropdown-item>
-				</el-dropdown-menu>
-			</template>
-		</el-dropdown>
-		<Search ref="searchRef" /> -->
 	</div>
+  <QrCodeModal ref="qrCodeModalRef" @getUserStatus="getUserStatus" />
 </template>
 
 <script lang="ts">
-import { ref, getCurrentInstance, computed, reactive, toRefs, onMounted, defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import screenfull from 'screenfull';
-import { storeToRefs } from 'pinia';
-import { useUserInfo } from '../../../stores/userInfo';
-import { useThemeConfig } from '../../../stores/themeConfig';
-import { Session, Local } from '../../../utils/storage';
-import UserNews from '/@/layout/navBars/breadcrumb/userNews.vue';
-import Search from '/@/layout/navBars/breadcrumb/search.vue';
+import {defineComponent, onMounted, reactive, ref, toRefs} from 'vue';
+import QrCodeModal from '/@/components/qrCodeLogin/index.vue';
+import {getAction, postAction} from '../../../api/common';
+import {getLoginStatusApi} from '../../../api/login';
+import {Session} from '../../../utils/storage';
+import {getUserInfoApi} from '../../../api/user';
 
 export default defineComponent({
 	name: 'layoutBreadcrumbUser',
-	components: { UserNews, Search },
+  components: {
+    QrCodeModal
+  },
 	setup() {
-		const { proxy } = <any>getCurrentInstance();
-		const router = useRouter();
-		const stores = useUserInfo();
-		const storesThemeConfig = useThemeConfig();
-		const { userInfos } = storeToRefs(stores);
-		const { themeConfig } = storeToRefs(storesThemeConfig);
-		const searchRef = ref();
-		const state = reactive({
-			isScreenfull: false,
-			disabledI18n: 'zh-cn',
-			disabledSize: 'large',
-		});
-		// 设置分割样式
-		const layoutUserFlexNum = computed(() => {
-			let num: string | number = '';
-			const { layout, isClassicSplitMenu } = themeConfig.value;
-			const layoutArr: string[] = ['defaults', 'columns'];
-			if (layoutArr.includes(layout) || (layout === 'classic' && !isClassicSplitMenu)) num = '1';
-			else num = '';
-			return num;
-		});
-		// 全屏点击时
-		const onScreenfullClick = () => {
-			if (!screenfull.isEnabled) {
-				ElMessage.warning('暂不不支持全屏');
-				return false;
-			}
-			screenfull.toggle();
-			screenfull.on('change', () => {
-				if (screenfull.isFullscreen) state.isScreenfull = true;
-				else state.isScreenfull = false;
-			});
-		};
-		// 布局配置 icon 点击时
-		const onLayoutSetingClick = () => {
-			proxy.mittBus.emit('openSetingsDrawer');
-		};
-		// 下拉菜单点击时
-		const onHandleCommandClick = (path: string) => {
-			if (path === 'logOut') {
-				ElMessageBox({
-					closeOnClickModal: false,
-					closeOnPressEscape: false,
-					title: '提示',
-					message: '此操作将退出登录, 是否继续?',
-					showCancelButton: true,
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					buttonSize: 'default',
-					beforeClose: (action, instance, done) => {
-						if (action === 'confirm') {
-							instance.confirmButtonLoading = true;
-							instance.confirmButtonText = '退出中';
-							setTimeout(() => {
-								done();
-								setTimeout(() => {
-									instance.confirmButtonLoading = false;
-								}, 300);
-							}, 700);
-						} else {
-							done();
-						}
-					},
-				})
-					.then(async () => {
-						Session.clear(); // 清除缓存/token等
-						// 使用 reload 时，不需要调用 resetRoute() 重置路由
-						window.location.reload();
-					})
-					.catch(() => {});
-			} else if (path === 'wareHouse') {
-				window.open('https://gitee.com/lyt-top/vue-next-admin');
-			} else {
-				router.push(path);
-			}
-		};
-		// 菜单搜索点击
-		const onSearchClick = () => {
-			searchRef.value.openSearch();
-		};
-		// 组件大小改变
-		const onComponentSizeChange = (size: string) => {
-			Local.remove('themeConfig');
-			themeConfig.value.globalComponentSize = size;
-			Local.set('themeConfig', themeConfig.value);
-			initComponentSize();
-			window.location.reload();
-		};
-		// 初始化全局组件大小
-		const initComponentSize = () => {
-			switch (Local.get('themeConfig').globalComponentSize) {
-				case 'large':
-					state.disabledSize = 'large';
-					break;
-				case 'default':
-					state.disabledSize = 'default';
-					break;
-				case 'small':
-					state.disabledSize = 'small';
-					break;
-			}
-		};
-		/**
-		 * 操作窗口
-		 */
+    const qrCodeModalRef = ref();
+    const state = reactive({
+      userInfo: {} as any,
+    });
 		const setScreen = (value: string) => {
 			window.electronAPI.setScreen(value);
 		};
-		// 页面加载时
-		onMounted(() => {
-			if (Local.get('themeConfig')) {
-				initComponentSize();
-			}
-		});
+    const showQrCodeLogin = () => {
+      if (state.userInfo) {
+        getAction(getUserInfoApi + '?uid=' + state.userInfo.userId, '').then(res => {
+          console.log(res);
+        });
+      } else {
+        qrCodeModalRef.value.openDialog();
+      }
+    };
+    const getUserStatus = () => {
+      postAction(getLoginStatusApi + '?timestamp=' + Date.now(), {
+        cookie: Session.get('cookie')
+      }).then(res => {
+        if (res.data.profile) {
+          state.userInfo = res.data.profile;
+          Session.set('userInfo', res.data.profile);
+        }
+      })
+    };
+    onMounted(() => {
+      getUserStatus();
+    });
 		return {
-			userInfos,
-			onLayoutSetingClick,
-			onHandleCommandClick,
-			onScreenfullClick,
-			onSearchClick,
-			onComponentSizeChange,
 			setScreen,
-			searchRef,
-			layoutUserFlexNum,
-			...toRefs(state),
+      showQrCodeLogin,
+      qrCodeModalRef,
+      getUserStatus,
+      ...toRefs(state)
 		};
 	},
 });
@@ -216,48 +79,31 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .layout-navbars-breadcrumb-user {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	&-link {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		white-space: nowrap;
-		&-photo {
-			width: 25px;
-			height: 25px;
-			border-radius: 100%;
-		}
-	}
-	&-icon {
-		padding: 0 10px;
-		cursor: pointer;
-		color: var(--next-bg-topBarColor);
-		height: 50px;
-		line-height: 50px;
-		display: flex;
-		align-items: center;
-		&:hover {
-			background: var(--next-color-user-hover);
-			i {
-				display: inline-block;
-				animation: logoAnimation 0.3s ease-in-out;
-			}
-		}
-	}
-	::v-deep(.el-dropdown) {
-		color: var(--next-bg-topBarColor);
-	}
-	::v-deep(.el-badge) {
-		height: 40px;
-		line-height: 40px;
-		display: flex;
-		align-items: center;
-	}
-	::v-deep(.el-badge__content.is-fixed) {
-		top: 12px;
-	}
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  .login-state{
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .user-avatar{
+      width: 50px;
+      height: 50px;
+      padding: 10px;
+      img{
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+  .line{
+    width: 1px;
+    height: 20px;
+    background: #fff;
+    margin: 0 15px;
+  }
 	.el-icon{
 		margin-right: 20px;
 		font-size: 20px;
@@ -266,5 +112,8 @@ export default defineComponent({
       color: #126ac6;
     }
 	}
+  .user-icon{
+    margin-right: 0;
+  }
 }
 </style>

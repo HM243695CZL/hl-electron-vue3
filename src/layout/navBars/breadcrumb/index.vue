@@ -1,8 +1,8 @@
 <template>
 	<div class="layout-navbars-breadcrumb-index">
-		<Logo v-if="setIsShowLogo" />
-		<Breadcrumb />
-		<Horizontal :menuList="menuList" v-if="isLayoutTransverse" />
+    <div class="client-name">
+      云音乐客户端
+    </div>
 		<User />
 	</div>
 </template>
@@ -13,10 +13,7 @@ import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useRoutesList } from '../../../stores/routesList';
 import { useThemeConfig } from '../../../stores/themeConfig';
-import Breadcrumb from '/@/layout/navBars/breadcrumb/breadcrumb.vue';
 import User from '/@/layout/navBars/breadcrumb/user.vue';
-import Logo from '/@/layout/logo/index.vue';
-import Horizontal from '/@/layout/navMenu/horizontal.vue';
 
 // 定义接口来定义对象的类型
 interface IndexState {
@@ -25,7 +22,7 @@ interface IndexState {
 
 export default defineComponent({
 	name: 'layoutBreadcrumbIndex',
-	components: { Breadcrumb, User, Logo, Horizontal },
+	components: { User },
 	setup() {
 		const { proxy } = <any>getCurrentInstance();
 		const stores = useRoutesList();
@@ -113,7 +110,8 @@ export default defineComponent({
 	height: 50px;
 	display: flex;
 	align-items: center;
-	background: var(--next-bg-topBar);
+  justify-content: space-between;
+	background: #ec4141;
 	border-bottom: 1px solid var(--next-border-color-light)
 }
 </style>
