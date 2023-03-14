@@ -83,7 +83,7 @@ export const staticRoutes: Array<RouteRecordRaw> = [
 				name: 'home',
 				component: () => import('/@/views/online/recommend.vue'),
 				meta: {
-					title: '推荐',
+					title: '发现音乐',
 					isLink: '',
 					isHide: false,
 					isKeepAlive: true,
