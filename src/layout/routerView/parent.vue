@@ -87,7 +87,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-.component-parent{
-  height: calc(100vh - 130px);
-}
+//.component-parent{
+//  height: calc(100vh - 130px);
+//}
 </style>

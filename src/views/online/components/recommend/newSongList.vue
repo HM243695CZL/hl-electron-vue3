@@ -42,7 +42,6 @@ import {onMounted, reactive} from 'vue';
             item.artistsName.push(ele.name);
           })
         });
-        console.log(state.dataList);
       }
     })
   };
