@@ -44,6 +44,7 @@ onMounted(() => {
   margin: 20px 0;
 
   .item {
+    cursor: pointer;
     .img-box {
       position: relative;
 
