@@ -116,7 +116,7 @@ import {StatusEnum} from '../../../../common/status.enum';
         background: #fff;
         position: absolute;
         right: 5px;
-        top: 50%;
+        top: 60%;
         font-size: 20px;
         display: flex;
         justify-content: center;
