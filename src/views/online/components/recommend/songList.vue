@@ -14,9 +14,9 @@
       </div>
     </div>
     <div class="hot-tag">
-      <el-popover placement="bottom-start" trigger="click" width="1000">
+      <el-popover placement="bottom-start" trigger="click" width="800" :visible="state.visible">
         <template #reference>
-          <div class="all-list">
+          <div class="all-list" @click="state.visible = !state.visible">
             {{state.currentTag ? state.currentTag : '全部歌单'}}
             <el-icon>
               <ele-ArrowRight />
@@ -25,12 +25,12 @@
         </template>
         <div class="all-song-list">
           <div class="title">
-            <div class="item">全部歌单</div>
+            <div class="item" @click="changeTag('')">全部歌单</div>
           </div>
           <div class="category-list">
             <div class="category-item" v-for="item in state.allSongList" :key="item.name">
               <div class="type">
-                <SvgIcon :name="item.icon" size="16" />
+                <SvgIcon :name="item.icon" :size="16" />
                 {{item.name}}
               </div>
               <div class="tag-list">
@@ -92,7 +92,8 @@
     hotList: [] as any,
     currentTag: '',
     songList: [] as any,
-    allSongList: [] as any
+    allSongList: [] as any,
+    visible: false
   })
   const getConcentration = () => {
     getAction(getConcentrationApi + '?limit=1', '').then((res: any) => {
@@ -116,10 +117,15 @@
     });
   };
   const changeTag = (data: any) => {
-    if (data.name === state.currentTag) {
-      return false;
+    if (!data) {
+      state.currentTag = data;
+    } else {
+      if (data.name === state.currentTag) {
+        return false;
+      }
+      state.currentTag = data.name;
     }
-    state.currentTag = data.name;
+    state.visible = false;
     getSongList();
   };
   const getCateList = () => {
@@ -259,6 +265,9 @@
       border-bottom: 1px solid #f5f5f5;
       color: #ec4141;
       cursor: pointer;
+      .item{
+        width: fit-content;
+      }
     }
     .category-list{
       padding: 20px;
