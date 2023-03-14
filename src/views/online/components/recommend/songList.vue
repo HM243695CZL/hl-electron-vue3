@@ -14,14 +14,43 @@
       </div>
     </div>
     <div class="hot-tag">
-      <div :class="['item', state.currentTag === item.name ? 'active' : '']"
-           @click="changeTag(item)"
-           v-for="item in state.hotList" :key="item.id">{{item.name}}</div>
-      <div class="all-list">
-        {{state.currentTag ? state.currentTag : '全部歌单'}}
-        <el-icon>
-          <ele-ArrowRight />
-        </el-icon>
+      <el-popover placement="bottom-start" trigger="click" width="1000">
+        <template #reference>
+          <div class="all-list">
+            {{state.currentTag ? state.currentTag : '全部歌单'}}
+            <el-icon>
+              <ele-ArrowRight />
+            </el-icon>
+          </div>
+        </template>
+        <div class="all-song-list">
+          <div class="title">
+            <div class="item">全部歌单</div>
+          </div>
+          <div class="category-list">
+            <div class="category-item" v-for="item in state.allSongList" :key="item.name">
+              <div class="type">
+                <SvgIcon :name="item.icon" size="16" />
+                {{item.name}}
+              </div>
+              <div class="tag-list">
+                <div class="tag" v-for="ele in item.list" :key="ele">
+                  <div :class="['text', ele.name === state.currentTag ? 'active' : '']" @click="changeTag(ele)">
+                    {{ele.name}}
+                    <span class="is-hot" v-if="ele.hot">HOT</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-popover>
+      <div class="hot-item-box">
+        <div :class="['item', state.currentTag === item.name ? 'active' : '']"
+             @click="changeTag(item)"
+             v-for="item in state.hotList" :key="item.id">
+          {{item.name}}
+        </div>
       </div>
     </div>
     <div class="song-list">
@@ -56,13 +85,14 @@
   import {getConcentrationApi} from '../../../../api/top';
   import {onMounted, reactive} from 'vue';
   import {StatusEnum} from '../../../../common/status.enum';
-  import {getHotCateListApi} from '../../../../api/playlist';
+  import {getCateListApi, getHotCateListApi} from '../../../../api/playlist';
 
   const state = reactive({
     concentrationMap: {} as any,
     hotList: [] as any,
     currentTag: '',
-    songList: [] as any
+    songList: [] as any,
+    allSongList: [] as any
   })
   const getConcentration = () => {
     getAction(getConcentrationApi + '?limit=1', '').then((res: any) => {
@@ -71,7 +101,7 @@
       }
     })
   };
-  const getCateList = () => {
+  const getHotCateList = () => {
     getAction(getHotCateListApi , '').then((res: any) => {
       if (res.code === StatusEnum.SUCCESS) {
         state.hotList = res.tags;
@@ -79,7 +109,7 @@
     });
   };
   const getSongList = () => {
-    getAction(getConcentrationApi + '?cat=' + (state.currentTag ? state.currentTag : '全部'), '').then((res: any) => {
+    getAction(getConcentrationApi + '?cat=' + (state.currentTag ? state.currentTag : '全部') + '&limit=37', '').then((res: any) => {
       if (res.code === StatusEnum.SUCCESS) {
         state.songList = res.playlists.slice(1);
       }
@@ -91,11 +121,38 @@
     }
     state.currentTag = data.name;
     getSongList();
-  }
+  };
+  const getCateList = () => {
+    getAction(getCateListApi, '').then((res: any) => {
+      if (res.code === StatusEnum.SUCCESS) {
+        let categoriesList = [] as any;
+        const iconList = ['fa fa-life-ring', 'fa fa-shekel', 'ele-CoffeeCup', 'fa fa-smile-o', 'ele-Menu']
+        for (const o in res.categories) {
+          categoriesList.push({
+            category: o,
+            name: res.categories[o],
+            list: [],
+          });
+        }
+        iconList.map((item, index) => {
+          categoriesList[index].icon = item;
+        });
+        res.sub.map((item: any) => {
+          categoriesList.map((ele: any) => {
+            if (item.category + '' === ele.category) {
+              ele.list.push(item);
+            }
+          });
+        });
+        state.allSongList = categoriesList;
+      }
+    })
+  };
   onMounted(() => {
     getConcentration();
-    getCateList();
+    getHotCateList();
     getSongList();
+    getCateList();
   })
 </script>
 
@@ -137,19 +194,9 @@
     }
     .hot-tag{
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
       margin: 20px 0;
-      .item{
-        padding: 5px 10px;
-        cursor: pointer;
-        &:hover{
-          color: #126ac6;
-        }
-        &.active{
-          color: #126ac6;
-        }
-      }
       .all-list{
         padding: 3px 6px;
         border-radius: 15px;
@@ -157,6 +204,22 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        cursor: pointer;
+      }
+      .hot-item-box{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        .item{
+          padding: 5px 10px;
+          cursor: pointer;
+          &:hover{
+            color: #ec4141;
+          }
+          &.active{
+            color: #ec4141;
+          }
+        }
       }
     }
     .song-list{
@@ -186,6 +249,64 @@
         }
         .name{
           margin: 10px 0;
+        }
+      }
+    }
+  }
+  .all-song-list{
+    .title{
+      padding: 20px;
+      border-bottom: 1px solid #f5f5f5;
+      color: #ec4141;
+      cursor: pointer;
+    }
+    .category-list{
+      padding: 20px;
+      .category-item{
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-bottom: 10px;
+        .type{
+          color: #999;
+          width: 120px;
+          padding: 5px;
+          display: flex;
+          align-items: center;
+          i{
+            margin-right: 5px;
+          }
+        }
+        .tag-list{
+          flex: 1;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          flex-wrap: wrap;
+          .tag{
+            width: 15%;
+            cursor: pointer;
+            &:hover{
+              color: #ec4141;
+            }
+            .text{
+              padding: 5px 15px;
+              border-radius: 15px;
+              width: fit-content;
+              position: relative;
+              &.active{
+                color: #ec4141;
+                background: #fef5f5;
+              }
+              .is-hot{
+                position: absolute;
+                top: 0;
+                right: -10px;
+                transform: scale(.5);
+                color: #ec4141;
+              }
+            }
+          }
         }
       }
     }
